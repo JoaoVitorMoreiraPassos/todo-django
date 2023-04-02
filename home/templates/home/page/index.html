@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css"
+        integrity="sha512-P9vJUXK+LyvAzj8otTOKzdfF1F3UYVl13+F8Fof8/2QNb8Twd6Vb+VD52I7+87tex9UXxnzPgWA3rH96RExA7A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css"
+        integrity="sha512-sVSECYdnRMezwuq5uAjKQJEcu2wybeAPjU4VJQ9pCRcCY4pIpIw4YMHIOQ0CypfwHRvdSPbH++dA3O4Hihm/LQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css"
+        integrity="sha512-tk4nGrLxft4l30r9ETuejLU0a3d7LwMzj0eXjzc16JQj+5U1IeVoCuGLObRDc3+eQMUcEQY1RIDPGvuA7SNQ2w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'globals/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'home/css/style.css' %}">
+    <title>Todo | Home</title>
+</head>
+
+<body>
+    {% include 'bases/header.html' %}
+
+    <div class="container">
+        <div class="registers">
+
+            <div class="category-register-container">
+                <div class="open-close">
+                    <p>Criar Categoria</p>
+                    <button class="open" id="open-close-category-button"><i class="fas fa-chevron-down"></i></button>
+                </div>
+                <div class="category-register" id="category-register">
+                    <form action="{% url 'home:create_category' %}" method="post" class="category-form">
+                        {% csrf_token %}
+                        {% for field in form1 %}
+                        <div class="field-container">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {{ field.errors }}
+                        </div>
+                        {% endfor %}
+                        <div class="category-register-button">
+                            <button type="submit">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="todo-register-container">
+                <div class="open-close">
+                    <p>Criar Tarefa</p>
+                    <button class="open" id="open-close-todo-button"><i class="fas fa-chevron-down"></i></button>
+                </div>
+                <div class="todo-register">
+                    <form action="{% url 'home:create_todo' %}" method="post" class="todo-form">
+                        {% csrf_token %}
+                        {% for field in form2 %}
+                        <div class="field-container">
+                            {{ field.label_tag }}
+                            {% if field.id_for_label == 'id_date_to_complete' %}
+                            <input type="date" name="date_to_complete">
+                            {% else %}
+                            {{ field }}
+                            {% endif %}
+                            {{ field.errors }}
+                        </div>
+                        {% endfor %}
+                        <div class="todo-register-button">
+                            <button type="submit">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="todo-container">
+            {% for todo in todos %}
+            
+            <div class="todo normal">
+                <div class="todo-header">
+                    <p>{{ todo.title }}</p>
+                    <div class="todo-header-icons">
+                        <i class="fas fa-edit"></i>
+                        <a href="{% url 'home:delete_todo' pk=todo.id %}"><i class="fas fa-trash-alt"></i></a>
+                    </div>
+                </div>
+                <div class="todo-body">
+                    <p class="todo-description">{{ todo.description }}</p>
+                    <p class="date_to_complete">{{ todo.date_to_complete }}</p>
+                </div>
+                <div class="todo-footer">
+                    <p>{{ todo.category }}</p>
+                    <p>{{ todo.created_at }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% include 'bases/footer.html' %}
+    <script src="{% static 'home/js/script.js' %}"></script>
+</body>
+
+</html>

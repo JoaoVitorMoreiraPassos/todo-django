@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css"
+        integrity="sha512-P9vJUXK+LyvAzj8otTOKzdfF1F3UYVl13+F8Fof8/2QNb8Twd6Vb+VD52I7+87tex9UXxnzPgWA3rH96RExA7A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css"
+        integrity="sha512-sVSECYdnRMezwuq5uAjKQJEcu2wybeAPjU4VJQ9pCRcCY4pIpIw4YMHIOQ0CypfwHRvdSPbH++dA3O4Hihm/LQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css"
+        integrity="sha512-tk4nGrLxft4l30r9ETuejLU0a3d7LwMzj0eXjzc16JQj+5U1IeVoCuGLObRDc3+eQMUcEQY1RIDPGvuA7SNQ2w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href={% static "login/css/style.css" %}>
+    <link rel="stylesheet" href={% static "globals/css/style.css" %}>
+    <title>Todo | Login</title>
+</head>
+
+<body>
+    {% include "bases/header.html" %}
+    <div class="container">
+        <section class="login-container">
+            <h2 class="login-title">Login</h2>
+            <form action="{% url 'login:authorize' %}" method="post">
+                <div class="form-container">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="field-container">
+                            {{ field.label_tag }}
+
+                            {% if field.id_for_label == "id_password" or field.id_for_label == 'id_password2' %}
+                            <div class="input-container">
+                                {{ field }}
+                                <i class="fas fa-eye" id="eye"></i>
+                            </div>
+                            {% else %}
+                                {{ field }}
+                            {% endif %}
+                            {{ field.errors }}
+                        </div>
+                    {% endfor %}
+                    <div class="login-button-container">
+                        <button type="submit" class="login-button">Entrar</button>
+                    </div>
+                    <div class="redirect-to-register">
+                        <span class="register-span">
+                            Não tem uma conta?
+                        </span>
+                        <a href="{% url 'register:register'%}" class="register-link">Cadastre-se</a>
+                    
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+    {% include "bases/footer.html" %}
+    <script src={% static "login/js/script.js" %}></script>
+</body>
+
+</html>

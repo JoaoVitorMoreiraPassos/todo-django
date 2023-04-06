@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, TodoItem
+from .models import Category, TodoItem, LinkToTodoItem
 # Register your models here.
 
 
@@ -9,4 +9,8 @@ class CategoryAdmin(admin.ModelAdmin):
     
 @admin.register(TodoItem)
 class TodoItemAdmin(admin.ModelAdmin):
+    ...
+    
+@admin.register(LinkToTodoItem)
+class LinkToTodoItemAdmin(admin.ModelAdmin):
     ...

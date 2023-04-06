@@ -78,22 +78,41 @@
 
         <div class="todo-container">
             {% for todo in todos %}
-            
+
             <div class="todo normal">
+                {% csrf_token %}
                 <div class="todo-header">
-                    <p>{{ todo.title }}</p>
-                    <div class="todo-header-icons">
-                        <i class="fas fa-edit"></i>
-                        <a href="{% url 'home:delete_todo' pk=todo.id %}"><i class="fas fa-trash-alt"></i></a>
-                    </div>
+                    <p class="todo-title">{{ todo.title }}</p>
+                    <p class="category-todo">{{ todo.category }}</p>
                 </div>
                 <div class="todo-body">
                     <p class="todo-description">{{ todo.description }}</p>
-                    <p class="date_to_complete">{{ todo.date_to_complete }}</p>
+                    <div class="link-container">
+                        <p class="label-links">Links: </p>
+                        {% for link in todo.link %}
+                            <div class="todo-link">
+                            <a href={% url 'home:redirector' way=link.url %} target="_blank" >{{ link.title }}</a>
+                            <a href="{% url 'home:delete_link' pk=link.pk %}" class="remove-link"><i class="fas fa-times"></i></a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <form action={% url 'home:add_link' pk=todo.pk %} method="post" class="add-link-container">
+                        {% csrf_token %}
+                        <input type="text" name="link" id="link" placeholder="www.todolist.com">
+                        <input type="text" name="title" id="title" placeholder="Titulo">
+                        <button type="submit" class="remove-link"><i class="fas fa-check"></i></button>
+                    </form>
+                    <div class="add-link-button open"><i class="fas fa-chevron-down"></i></div>
                 </div>
                 <div class="todo-footer">
-                    <p>{{ todo.category }}</p>
-                    <p>{{ todo.created_at }}</p>
+                    <p class="created-at">{{ todo.created_at }}</p>
+                    <div class="todo-header-icons">
+                        <i class="fas fa-edit open-editor"></i>
+                        <a class="remove-todo" href="{% url 'home:delete_todo' pk=todo.id %}">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </div>
+                    <p class="date_to_complete">{{ todo.date_to_complete }}</p>
                 </div>
             </div>
             {% endfor %}
@@ -101,6 +120,7 @@
     </div>
     {% include 'bases/footer.html' %}
     <script src="{% static 'home/js/script.js' %}"></script>
+    <script src="{% static 'home/js/edit.js' %}"></script>
 </body>
 
 </html>

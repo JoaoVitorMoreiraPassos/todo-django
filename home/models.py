@@ -20,3 +20,10 @@ class TodoItem(models.Model):
     def __str__(self):
         return self.title
     
+class LinkToTodoItem(models.Model):
+    title = models.CharField(max_length=65)
+    url = models.URLField()
+    todo_item = models.ForeignKey(TodoItem, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.title

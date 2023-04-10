@@ -2,17 +2,15 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.http import Http404
-from .models import *
-from .forms import *
-from datetime import date as dt
-from django.views.decorators.csrf import csrf_exempt
+from .models import Category, TodoItem, LinkToTodoItem
+from .forms import CategoryForm, TodoItemForm
+
 
 # Create your views here.
 @login_required(login_url='login:login', redirect_field_name='next')
 def index(request):
     form1 = CategoryForm()
     form2 = TodoItemForm(int(request.user.id))
-    
     todos = TodoItem.objects.filter(category__user=request.user).order_by('date_to_complete')
     # Adicionar os links de LinkToTodo para cada todo relacionada.
     for todo in todos:
@@ -27,11 +25,11 @@ def index(request):
         'todos': todos,
     })
 
+
 @login_required(login_url='login:login', redirect_field_name='next')
 def create_category(request):
     if not request.POST:
         raise Http404()
-    
     POST = request.POST
     POST._mutable = True
     POST['user'] = request.user
@@ -41,7 +39,8 @@ def create_category(request):
         return redirect(reverse('home:home'))
     else:
         return redirect(reverse('home:home'))
-    
+
+
 @login_required(login_url='login:login', redirect_field_name='next')
 def create_todo(request):
     if not request.POST:
@@ -53,10 +52,10 @@ def create_todo(request):
         form.save()
         
     return redirect(reverse('home:home'))
-    
+
+
 @login_required(login_url='login:login', redirect_field_name='next')
 def edit_todo(request, pk):
-    
     todo = TodoItem.objects.filter(pk=pk).first()
     if todo:
         if request.user == todo.category.user:
@@ -76,7 +75,7 @@ def edit_todo(request, pk):
         else:
             return redirect(reverse('home:home'))
     return redirect(reverse('home:home'))
-    
+
 
 @login_required(login_url='login:login', redirect_field_name='next')
 def delete_todo(request, pk):
@@ -89,18 +88,18 @@ def delete_todo(request, pk):
             return redirect(reverse('home:home'))
     else:
         return redirect(reverse('home:home'))
-    
+
+
 def redirector(request, way):
-    
     return render(request, "home/page/redirect.html", context={
         'way': way
         }
     )
 
+
 def add_link(request, pk):
     if not request.POST:
         raise Http404()
-    
     POST = request.POST.copy()
     if POST['link'] != '':
         if request.user == TodoItem.objects.filter(pk=pk).first().category.user:
@@ -114,6 +113,7 @@ def add_link(request, pk):
             link.save()
 
     return redirect(reverse('home:home'))
+
 
 def delete_link(request, pk):
     link = LinkToTodoItem.objects.filter(pk=pk).first()

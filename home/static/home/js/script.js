@@ -82,20 +82,20 @@ document.getElementById("open-close-todo-button").addEventListener("click", () =
 document.querySelectorAll('.todo-body').forEach(linkContainer => {
     linkContainer.childNodes[7].addEventListener("click", function () {
         if (linkContainer.childNodes[7].classList[1] == "open") {
-            linkContainer.childNodes[5].style.animation = "open-link .3s linear forwards";
+            linkContainer.childNodes[5].style.animation = "open-link .3s ease-in forwards";
             setTimeout(() => {
                 linkContainer.childNodes[7].childNodes[0].classList = "fas fa-chevron-up";
             }, 300);
-            linkContainer.childNodes[5].style.height = "4rem";
+            linkContainer.childNodes[5].style.padding = ".5rem";
             linkContainer.childNodes[7].classList.remove("open");
             linkContainer.childNodes[7].classList.add("close");
         }
         else {
-            linkContainer.childNodes[5].style.animation = "close-link .3s linear forwards";
+            linkContainer.childNodes[5].style.animation = "close-link .3s ease-in forwards";
             setTimeout(() => {
                 linkContainer.childNodes[7].childNodes[0].classList = "fas fa-chevron-down";
             }, 300);
-            linkContainer.childNodes[5].style.height = "0";
+            linkContainer.childNodes[5].style.padding = "0";
             linkContainer.childNodes[7].classList.remove("close");
             linkContainer.childNodes[7].classList.add("open");
         }

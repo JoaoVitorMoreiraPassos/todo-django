@@ -80,7 +80,7 @@
         <div class="todo-container">
             {% for todo in todos %}
 
-            <div class="todo normal">
+            <div class="todo normal {{ todo.pk }}">
                 {% csrf_token %}
                 <div class="todo-header">
                     <p class="todo-title">{{ todo.title }}</p>
@@ -91,18 +91,18 @@
                     <div class="link-container">
                         <p class="label-links">Links: </p>
                         {% for link in todo.link %}
-                            <div class="todo-link">
+                            <div class="todo-link {{link.pk}}">
                             <a href={% url 'home:redirector' way=link.url %} target="_blank" >{{ link.title }}</a>
-                            <a href="{% url 'home:delete_link' pk=link.pk %}" class="remove-link"><i class="fas fa-times"></i></a>
+                            <a class="remove-link"><i class="fas fa-times"></i></a>
                             </div>
                         {% endfor %}
                     </div>
-                    <form action={% url 'home:add_link' pk=todo.pk %} method="post" class="add-link-container">
+                    <div class="add-link-container {{ todo.pk }}">
                         {% csrf_token %}
                         <input type="text" name="link" id="link" class="link-input-url" placeholder="www.todolist.com">
                         <input type="text" name="title" id="title" class="link-input-title" placeholder="Titulo">
-                        <button type="submit" class="send-link">Adicionar<i class="fas fa-check"></i></button>
-                    </form>
+                        <button class="send-link">Adicionar<i class="fas fa-check"></i></button>
+                    </div>
                     <div class="add-link-button open"><i class="fas fa-chevron-down"></i></div>
                 </div>
                 <div class="todo-footer">
@@ -122,6 +122,90 @@
     {% include 'bases/footer.html' %}
     <script src="{% static 'home/js/script.js' %}"></script>
     <script src="{% static 'home/js/edit.js' %}"></script>
+    <script> 
+        document.querySelectorAll(".add-link-container").forEach((container) => {
+            container.childNodes[7].addEventListener("click", () => {
+                let link = container.childNodes[3].value;
+                let name = container.childNodes[5].value;
+                let id = container.classList[1];
+                console.log(link + " " + name + " " + id)
+                let todo = container.parentNode;
+                $.ajax({
+                    url: "/add_link/" + id + "/",
+                    type: "POST",
+                    datatype: "json",
+                    data: {
+                        link: link,
+                        title: name,
+                        csrfmiddlewaretoken: document.querySelector("input[name='csrfmiddlewaretoken']").value
+                    },
+                    success: function (data) {
+                        if (data.url == "") {
+                            alert("Link inválido");
+                            return;
+                        }
+                        let div = document.createElement("div");
+                        div.classList.add("todo-link");
+                        let a = document.createElement("a");
+                        a.href = "/redirector/" + data.url + "/";
+                        a.target = "_blank";
+                        a.innerHTML = data.title;
+                        div.appendChild(a);
+                        let a2 = document.createElement("a");
+                        a2.href = "/delete_link/" + data.id + "/";
+                        a2.classList.add("remove-link");
+                        let i = document.createElement("i");
+                        i.classList.add("fas");
+                        i.classList.add("fa-times");
+                        a2.appendChild(i);
+                        div.appendChild(a2);
+                        const bg_color = getRandomColor("#176585");
+                        const font_color = getContrastColor(bg_color);
+                        console.log(bg_color)
+                        div.style.backgroundColor = `rgb(${bg_color.r}, ${bg_color.g}, ${bg_color.b})`;
+                        div.childNodes[0].style.color = font_color
+                        div.childNodes[1].style.color = font_color
+                        todo.childNodes[3].appendChild(div);
+                        container.childNodes[3].value = "";
+                        container.childNodes[5].value = "";
+                        
+                    },
+                    error: () => {
+                        alert("Erro ao adicionar link");
+                    }
+                })
+            })
+        })
+
+        let links = document.querySelectorAll(".todo-link");
+        links.forEach((link) => {
+            link.childNodes[3].addEventListener("click", () => {
+                let parent = link.parentNode;
+                let id = link.parentNode.parentNode.parentNode.classList[2];
+                $.ajax({
+                    url: "/delete_link/" + id + "/",
+                    type: "POST",
+                    datatype: "json",
+                    data: {
+                        id: link.classList[1],
+                        csrfmiddlewaretoken: document.querySelector("input[name='csrfmiddlewaretoken']").value
+                    },
+                    success: function (data) {
+                        if(data.status == "ok"){
+                            parent.removeChild(link);
+                        }
+                        else{
+                            alert("Erro ao remover link");
+                        }
+                    },
+                    error: () => {
+                        alert("Erro ao remover link");
+                    }
+                })
+            })
+        })
+
+    </script>
 </body>
 
 </html>

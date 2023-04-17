@@ -12,7 +12,6 @@ urlpatterns = [
     path("delete_link/<int:pk>/", v.delete_link, name="delete_link"),
     path("edit_todo/<int:pk>/", v.edit_todo, name="edit_todo"),
     path("add_link/<int:pk>/", v.add_link, name="add_link"),
-    path("create_category/", v.create_category, name="create_category"),
-    path("create_todo/", v.create_todo, name="create_todo"),
+    path("get_categories/", v.get_categories, name="get_categories"),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

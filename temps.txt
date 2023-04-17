@@ -1,0 +1,249 @@
+<div class="registers">
+
+    <div class="category-register-container">
+        <div class="open-close">
+            <p>Criar Categoria</p>
+            <button class="open" id="open-close-category-button"><i class="fas fa-chevron-down"></i></button>
+        </div>
+        <div class="category-register" id="category-register">
+            <form action="{% url 'home:create_category' %}" method="post" class="category-form">
+                {% csrf_token %}
+                {% for field in form1 %}
+                <div class="field-container">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {{ field.errors }}
+                </div>
+                {% endfor %}
+                <div class="category-register-button">
+                    <button type="submit">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="todo-register-container">
+        <div class="open-close">
+            <p>Criar Tarefa</p>
+            <button class="open" id="open-close-todo-button"><i class="fas fa-chevron-down"></i></button>
+        </div>
+        <div class="todo-register">
+            <form action="{% url 'home:create_todo' %}" method="post" class="todo-form">
+                {% csrf_token %}
+                {% for field in form2 %}
+                <div class="field-container">
+                    {{ field.label_tag }}
+                    {% if field.id_for_label == 'id_date_to_complete' %}
+                    <input type="date" name="date_to_complete">
+                    {% else %}
+                    {{ field }}
+                    {% endif %}
+                    {{ field.errors }}
+                </div>
+                {% endfor %}
+                <div class="todo-register-button">
+                    <button type="submit">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+--------------------------------------------------------
+
+
+let createTodo = (title, category, description, date, id) => {
+    let todo = document.createElement("div");
+    todo.classList = "todo";
+    todo.setAttribute("data-id", id);
+    todo.innerHTML = `
+    <div class="todo-header">
+        <p class="todo-title">${ title }</p>
+        <p class="category-todo">${ category }</p>
+    </div>
+    <div class="todo-body">
+        <p class="todo-description">${ description }</p>
+        <div class="link-container">
+            <p class="label-links">Links: </p>
+            {% for link in todo.link %}
+            <div class="todo-link ${link.pk}">
+                <a href={% url 'home:redirector' way=link.url %} target="_blank">${ link.title }</a>
+                <a class="remove-link"><i class="fas fa-times"></i></a>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="add-link-container ${ pk }">
+            {% csrf_token %}
+            <input type="text" name="link" id="link" class="link-input-url" placeholder="www.todolist.com">
+            <input type="text" name="title" id="title" class="link-input-title" placeholder="Titulo">
+            <button class="send-link">Adicionar<i class="fas fa-check"></i></button>
+        </div>
+        <div class="add-link-button open"><i class="fas fa-chevron-down"></i></div>
+    </div>
+    <div class="todo-footer">
+        <p class="created-at">${ created_at }</p>
+        <div class="todo-header-icons">
+            <i class="fas fa-edit open-editor"></i>
+            <a class="remove-todo" href="{% url 'home:delete_todo' pk=id %}">
+                <i class="fas fa-trash-alt"></i>
+            </a>
+        </div>
+        <p class="date_to_complete">${ date_to_complete }</p>
+    </div>
+    `;
+    todo.querySelector(".cancel-todo").addEventListener("click", () => {
+        closeEditor();
+    });
+    todo.querySelector(".save-todo").addEventListener("click", () => {
+        edit_todo(todo, id);
+    });
+    return todo;
+}
+let closeEditor = () => {
+    let editor = document.querySelector(".edit-form");
+    editor.remove();
+}
+
+let edit_todo = (todo, id) => {
+    let titulo = todo.querySelector(".todo-header .form-input").value;
+    let categoria = todo.querySelector(".todo-header .category-todo").value;
+    let descricao = todo.querySelector(".todo-body .todo-description").value;
+    let date = todo.querySelector(".todo-footer .todo-form date-todo").value;
+    let crsf = todo.querySelector("input[name='csrfmiddlewaretoken']");
+
+    const data = new FormData();
+    data.append("titulo", titulo);
+    data.append("categoria", categoria);
+    data.append("descricao", descricao);
+    data.append("data", date);
+
+    fetch(`/edit_todo/${id}/`, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": crsf.value
+        },
+        body: data
+    }).then((response) => {
+        return response.json();
+    }).then((data) => {
+        if (data.status == "success") {
+            let todo = document.querySelector(`.todo[data-id="${id}"]`);
+            todo.querySelector(".todo-header .todo-title").textContent = titulo;
+            todo.querySelector(".todo-body .todo-description").textContent = descricao;
+            todo.querySelector(".todo-footer .date_to_complete").textContent = data.data;
+            todo.querySelector(".todo-header .category-todo").textContent = data.categoria;
+            closeEditor();
+        }
+    });
+}
+
+let todos = document.querySelectorAll(".todo");
+todos.forEach((todo) => {
+    todo.childNodes[7].childNodes[3].childNodes[1].addEventListener("click", () => {
+        openEditor(todo);
+    });
+});
+let openEditor = (todo) => {
+    let titulo = todo.querySelector(".todo-header .todo-title").textContent;
+    let descricao = todo.querySelector(".todo-body .todo-description").textContent;
+    let data = todo.querySelector(".todo-footer .date_to_complete").textContent;
+    data = convert_date(data);
+    let categoria = todo.querySelector(".todo-header .category-todo").textContent;
+    // let categoria = todo.childNodes[7].childNodes[1].textContent;
+    let criacao = todo.querySelector(".todo-footer .created-at").textContent;
+    let id = todo.querySelector(".todo-footer .todo-header-icons .remove-todo").href.split("/")[4];
+    // Cria o formúlario
+    let form = document.createElement("div");
+    form.classList = "edit-form"
+    let crsf = document.querySelector("input[name='csrfmiddlewaretoken']");
+    form.appendChild(crsf);
+    form.method = "POST";
+    form.action = `/edit_todo/${id}/`;
+    // Cria o header do formúlario
+    form_todo_header = document.createElement("div");
+    form_todo_header.classList = "todo-header";
+    let form_titulo = document.createElement("input");
+    form_titulo.type = "text";
+    form_titulo.name = "titulo";
+    form_titulo.classList.toggle("form-input")
+    form_titulo.value = titulo;
+    form_todo_header.appendChild(form_titulo);
+    let form_todo_header_category = document.createElement("select");
+    form_todo_header_category.classList = "category-todo";
+    form_todo_header_category.classList.toggle("form-input")
+    form_todo_header_category.name = "categoria";
+    fetch("/get_categories/", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": crsf.value
+        },
+    }).then((response) => {
+        return response.json();
+    }).then((data) => {
+        data.categories.forEach((category) => {
+            let form_todo_footer_category_option = document.createElement("option");
+            form_todo_footer_category_option.value = category.id;
+            form_todo_footer_category_option.innerText = category.name;
+            if (category.nome == categoria) {
+                form_todo_footer_category_option.selected = true;
+            }
+            form_todo_header_category.appendChild(form_todo_footer_category_option);
+        });
+    })
+    form_todo_header.appendChild(form_todo_header_category);
+    form.appendChild(form_todo_header);
+
+    // Cria o body do formúlario
+    let form_todo_body = document.createElement("div");
+    form_todo_body.classList = "todo-body";
+    let form_todo_body_description = document.createElement("textarea");
+    form_todo_body_description.classList = "todo-description";
+    form_todo_body_description.classList.toggle("form-input-text")
+    form_todo_body_description.name = "descricao";
+    form_todo_body_description.value = descricao;
+    form_todo_body.appendChild(form_todo_body_description);
+    let form_todo_date_to_complete = document.createElement("input");
+    form_todo_date_to_complete.type = "date";
+    form_todo_date_to_complete.name = "data";
+    form_todo_date_to_complete.classList.toggle("form-input")
+    form_todo_date_to_complete.classList.toggle("date-todo")
+    form_todo_date_to_complete.value = data;
+    form_todo_body.appendChild(form_todo_body_description);
+    form.appendChild(form_todo_body);
+
+    // Cria o footer do formúlario
+    let form_todo_footer = document.createElement("div");
+    form_todo_footer.classList = "todo-footer";
+
+    let form_todo_footer_icons = document.createElement("div");
+    form_todo_footer_icons.classList = "todo-header-icons";
+
+    let submit = document.createElement("button");
+    submit.classList = "edit-todo-button";
+    let form_todo_header_icon_edit = document.createElement("i");
+    form_todo_header_icon_edit.classList = "fas fa-check-square close-editor";
+    submit.appendChild(form_todo_header_icon_edit);
+    form_todo_footer_icons.appendChild(submit)
+
+    let form_todo_footer_icon_remove = document.createElement("a");
+    form_todo_footer_icon_remove.classList = "remove-todo";
+    form_todo_footer_icon_remove.href = `/delete_todo/${id}/`;
+
+    let form_todo_header_icon_remove_i = document.createElement("i");
+    form_todo_header_icon_remove_i.classList = "fas fa-trash-alt";
+    form_todo_footer_icon_remove.appendChild(form_todo_header_icon_remove_i);
+    form_todo_footer_icons.appendChild(form_todo_footer_icon_remove);
+    form_todo_footer.appendChild(form_todo_footer_icons);
+
+    let form_todo_footer_created_at = document.createElement("span");
+    form_todo_footer_created_at.classList = "created-at";
+    form_todo_footer_created_at.textContent = criacao;
+    form_todo_footer.appendChild(form_todo_footer_created_at);
+    form_todo_footer.appendChild(form_todo_date_to_complete);
+    form.appendChild(form_todo_footer);
+
+    for (let i = 0; i < 8; i++) {
+        todo.removeChild(todo.childNodes[0])
+    }
+    todo.appendChild(form);
+};

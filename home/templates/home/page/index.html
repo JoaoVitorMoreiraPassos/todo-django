@@ -3,85 +3,18 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css"
-        integrity="sha512-P9vJUXK+LyvAzj8otTOKzdfF1F3UYVl13+F8Fof8/2QNb8Twd6Vb+VD52I7+87tex9UXxnzPgWA3rH96RExA7A=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css"
-        integrity="sha512-sVSECYdnRMezwuq5uAjKQJEcu2wybeAPjU4VJQ9pCRcCY4pIpIw4YMHIOQ0CypfwHRvdSPbH++dA3O4Hihm/LQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css"
-        integrity="sha512-tk4nGrLxft4l30r9ETuejLU0a3d7LwMzj0eXjzc16JQj+5U1IeVoCuGLObRDc3+eQMUcEQY1RIDPGvuA7SNQ2w=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'globals/css/style.css' %}">
+    {% include 'bases/head.html' %}
     <link rel="stylesheet" href="{% static 'home/css/style.css' %}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <title>Todo | Home</title>
 </head>
 
 <body>
     {% include 'bases/header.html' %}
-
     <div class="container">
-        <div class="registers">
-
-            <div class="category-register-container">
-                <div class="open-close">
-                    <p>Criar Categoria</p>
-                    <button class="open" id="open-close-category-button"><i class="fas fa-chevron-down"></i></button>
-                </div>
-                <div class="category-register" id="category-register">
-                    <form action="{% url 'home:create_category' %}" method="post" class="category-form">
-                        {% csrf_token %}
-                        {% for field in form1 %}
-                        <div class="field-container">
-                            {{ field.label_tag }}
-                            {{ field }}
-                            {{ field.errors }}
-                        </div>
-                        {% endfor %}
-                        <div class="category-register-button">
-                            <button type="submit">Create</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="todo-register-container">
-                <div class="open-close">
-                    <p>Criar Tarefa</p>
-                    <button class="open" id="open-close-todo-button"><i class="fas fa-chevron-down"></i></button>
-                </div>
-                <div class="todo-register">
-                    <form action="{% url 'home:create_todo' %}" method="post" class="todo-form">
-                        {% csrf_token %}
-                        {% for field in form2 %}
-                        <div class="field-container">
-                            {{ field.label_tag }}
-                            {% if field.id_for_label == 'id_date_to_complete' %}
-                            <input type="date" name="date_to_complete">
-                            {% else %}
-                            {{ field }}
-                            {% endif %}
-                            {{ field.errors }}
-                        </div>
-                        {% endfor %}
-                        <div class="todo-register-button">
-                            <button type="submit">Create</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
+        {% csrf_token %}
         <div class="todo-container">
             {% for todo in todos %}
-
-            <div class="todo normal {{ todo.pk }}">
-                {% csrf_token %}
+            <div class="todo {{ todo.priority }} {{ todo.pk }}">
                 <div class="todo-header">
                     <p class="todo-title">{{ todo.title }}</p>
                     <p class="category-todo">{{ todo.category }}</p>
@@ -91,14 +24,13 @@
                     <div class="link-container">
                         <p class="label-links">Links: </p>
                         {% for link in todo.link %}
-                            <div class="todo-link {{link.pk}}">
-                            <a href={% url 'home:redirector' way=link.url %} target="_blank" >{{ link.title }}</a>
+                        <div class="todo-link {{link.pk}}">
+                            <a href={% url 'home:redirector' way=link.url %} target="_blank">{{ link.title }}</a>
                             <a class="remove-link"><i class="fas fa-times"></i></a>
-                            </div>
+                        </div>
                         {% endfor %}
                     </div>
                     <div class="add-link-container {{ todo.pk }}">
-                        {% csrf_token %}
                         <input type="text" name="link" id="link" class="link-input-url" placeholder="www.todolist.com">
                         <input type="text" name="title" id="title" class="link-input-title" placeholder="Titulo">
                         <button class="send-link">Adicionar<i class="fas fa-check"></i></button>
@@ -106,10 +38,9 @@
                     <div class="add-link-button open"><i class="fas fa-chevron-down"></i></div>
                 </div>
                 <div class="todo-footer">
-                    <p class="created-at">{{ todo.created_at }}</p>
                     <div class="todo-header-icons">
                         <i class="fas fa-edit open-editor"></i>
-                        <a class="remove-todo" href="{% url 'home:delete_todo' pk=todo.id %}">
+                        <a class="remove-todo">
                             <i class="fas fa-trash-alt"></i>
                         </a>
                     </div>
@@ -122,90 +53,6 @@
     {% include 'bases/footer.html' %}
     <script src="{% static 'home/js/script.js' %}"></script>
     <script src="{% static 'home/js/edit.js' %}"></script>
-    <script> 
-        document.querySelectorAll(".add-link-container").forEach((container) => {
-            container.childNodes[7].addEventListener("click", () => {
-                let link = container.childNodes[3].value;
-                let name = container.childNodes[5].value;
-                let id = container.classList[1];
-                console.log(link + " " + name + " " + id)
-                let todo = container.parentNode;
-                $.ajax({
-                    url: "/add_link/" + id + "/",
-                    type: "POST",
-                    datatype: "json",
-                    data: {
-                        link: link,
-                        title: name,
-                        csrfmiddlewaretoken: document.querySelector("input[name='csrfmiddlewaretoken']").value
-                    },
-                    success: function (data) {
-                        if (data.url == "") {
-                            alert("Link inválido");
-                            return;
-                        }
-                        let div = document.createElement("div");
-                        div.classList.add("todo-link");
-                        let a = document.createElement("a");
-                        a.href = "/redirector/" + data.url + "/";
-                        a.target = "_blank";
-                        a.innerHTML = data.title;
-                        div.appendChild(a);
-                        let a2 = document.createElement("a");
-                        a2.href = "/delete_link/" + data.id + "/";
-                        a2.classList.add("remove-link");
-                        let i = document.createElement("i");
-                        i.classList.add("fas");
-                        i.classList.add("fa-times");
-                        a2.appendChild(i);
-                        div.appendChild(a2);
-                        const bg_color = getRandomColor("#176585");
-                        const font_color = getContrastColor(bg_color);
-                        console.log(bg_color)
-                        div.style.backgroundColor = `rgb(${bg_color.r}, ${bg_color.g}, ${bg_color.b})`;
-                        div.childNodes[0].style.color = font_color
-                        div.childNodes[1].style.color = font_color
-                        todo.childNodes[3].appendChild(div);
-                        container.childNodes[3].value = "";
-                        container.childNodes[5].value = "";
-                        
-                    },
-                    error: () => {
-                        alert("Erro ao adicionar link");
-                    }
-                })
-            })
-        })
-
-        let links = document.querySelectorAll(".todo-link");
-        links.forEach((link) => {
-            link.childNodes[3].addEventListener("click", () => {
-                let parent = link.parentNode;
-                let id = link.parentNode.parentNode.parentNode.classList[2];
-                $.ajax({
-                    url: "/delete_link/" + id + "/",
-                    type: "POST",
-                    datatype: "json",
-                    data: {
-                        id: link.classList[1],
-                        csrfmiddlewaretoken: document.querySelector("input[name='csrfmiddlewaretoken']").value
-                    },
-                    success: function (data) {
-                        if(data.status == "ok"){
-                            parent.removeChild(link);
-                        }
-                        else{
-                            alert("Erro ao remover link");
-                        }
-                    },
-                    error: () => {
-                        alert("Erro ao remover link");
-                    }
-                })
-            })
-        })
-
-    </script>
-</body>
+    </body>
 
 </html>

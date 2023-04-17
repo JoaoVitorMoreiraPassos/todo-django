@@ -1,0 +1,206 @@
+.container {
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    font-family: var(--font-inter);
+    padding: 5rem;
+    gap: 2rem;
+    background: var(--tertiary-color);
+}
+
+.categorys-container {
+    width: 35%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    align-items: flex-start;
+    font-family: var(--font-inter);
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 5px dotted var(--secondary-color);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    background: #eee;
+}
+
+.categorys {
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    font-family: var(--font-inter);
+    background: transparent;
+}
+
+.category {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-inter);
+    padding: 1rem;
+    border-radius: 10rem;
+    color: #fff;
+    font-weight: 300;
+}
+
+.category-name {
+    background: var(--near-of-deadline);
+    width: 85%;
+    height: 100%;
+    border: none;
+    border-radius: 10rem 0 0 10rem;
+    padding: 1rem;
+    font-size: 1.2rem;
+    font-family: var(--font-inter);
+    transition: all .2s linear;
+
+}
+
+.remove-category {
+    width: 15%;
+    height: 100%;
+    padding: 1.075rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 1rem 1rem 0;
+    border: 0;
+    background: var(--deadline);
+}
+
+.registers-container {
+    width: 60%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    font-family: var(--font-inter);
+    gap: 3rem;
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 5px dotted var(--secondary-color);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    background: #eee;
+}
+
+.registers {
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: flex-start;
+    font-family: var(--font-inter);
+    gap: 1rem;
+    background: transparent;
+}
+
+h2 {
+    color: #fff
+}
+
+.register {
+    width: auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    font-family: var(--font-inter);
+    background: var(--secondary-color);
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+input {
+    width: 100%;
+    height: 2rem;
+    border: none;
+    border-radius: 1rem;
+    padding: 0 1rem;
+    font-size: 1.2rem;
+    font-family: var(--font-inter);
+    background: #eee;
+    transition: all .2s linear;
+}
+
+input:focus {
+    background: #fff;
+    outline: 2px solid orange;
+}
+
+textarea {
+    width: 100%;
+    height: 10rem;
+    border: none;
+    border-radius: 1rem;
+    padding: 1rem;
+    font-size: 1.2rem;
+    font-family: var(--font-inter);
+    background: #eee;
+    transition: all .2s linear;
+}
+
+textarea:focus {
+    background: #fff;
+    outline: 2px solid orange;
+}
+
+select {
+    width: 100%;
+    height: 2rem;
+    border: none;
+    border-radius: 1rem;
+    padding: 0 1rem;
+    font-size: 1.2rem;
+    font-family: var(--font-inter);
+    background: #eee;
+    transition: all .2s linear;
+    text-align: center;
+    -webkit-appearance: none;
+}
+
+select:focus {
+    background: #fff;
+    outline: 2px solid orange;
+}
+
+.register button {
+    width: 100%;
+    height: 2rem;
+    border: none;
+    border-radius: 1rem;
+    padding: 0 1rem;
+    font-size: 1.2rem;
+    font-family: var(--font-inter);
+    background: var(--primary-color);
+    transition: all .2s linear;
+    color: #fff;
+    cursor: pointer;
+}
+
+.register button:hover {
+    background: var(--sixth-color);
+}

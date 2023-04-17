@@ -25,10 +25,12 @@ SECRET_KEY = "django-insecure-_vz=qr!!4kpx%0hp8hqi@*3m!jkikq6$l9+0ofip+qv!d9lw1o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["0.0.0.0",
-                "127.0.0.1",
-                "192.168.1.12",
-                "localhost",]
+ALLOWED_HOSTS = [
+    "0.0.0.0",
+    "127.0.0.1",
+    "192.168.1.12",
+    "localhost",
+]
 
 
 # Application definition
@@ -40,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "creation",
     "home",
     "login",
     "register",
@@ -60,9 +63,7 @@ ROOT_URLCONF = "todo.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [
-            BASE_DIR / "bases/templates/"    
-        ],
+        "DIRS": [BASE_DIR / "bases/templates/"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -122,7 +123,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
-APPEND_SLASH=False
+APPEND_SLASH = False
 STATIC_URL = "static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static",

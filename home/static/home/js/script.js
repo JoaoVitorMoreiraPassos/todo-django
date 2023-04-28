@@ -1,22 +1,22 @@
 document.querySelectorAll('.todo-body').forEach(linkContainer => {
     linkContainer.querySelector(".add-link-button").addEventListener("click", () => {
         if (linkContainer.querySelector(".add-link-button").classList[1] == "open") {
-            linkContainer.querySelector(".add-link-container").style.animation = "open-link .3s linear forwards";
-            setTimeout(() => {
-                linkContainer.querySelector(".add-link-button").childNodes[0].classList = "fas fa-chevron-up";
-            }, 300);
-            linkContainer.querySelector(".add-link-container").style.padding = ".5rem";
+            linkContainer.querySelector(".add-link-container").style.animation = "open-link .3s ease forwards";
             linkContainer.querySelector(".add-link-button").classList.remove("open");
             linkContainer.querySelector(".add-link-button").classList.add("close");
+            setTimeout(() => {
+                linkContainer.querySelector(".add-link-button").childNodes[0].classList = "fas fa-chevron-up";
+                // linkContainer.querySelector(".add-link-container").style.padding = ".5rem";
+            }, 300);
         }
         else {
-            linkContainer.querySelector(".add-link-container").style.animation = "close-link .3s linear forwards";
-            setTimeout(() => {
-                linkContainer.querySelector(".add-link-button").childNodes[0].classList = "fas fa-chevron-down";
-            }, 300);
-            linkContainer.querySelector(".add-link-container").style.padding = "0";
+            linkContainer.querySelector(".add-link-container").style.animation = "close-link .3s ease forwards";
             linkContainer.querySelector(".add-link-button").classList.remove("close");
             linkContainer.querySelector(".add-link-button").classList.add("open");
+            setTimeout(() => {
+                linkContainer.querySelector(".add-link-button").childNodes[0].classList = "fas fa-chevron-down";
+                // linkContainer.querySelector(".add-link-container").style.padding = "0";
+            }, 300);
         }
     })
 });

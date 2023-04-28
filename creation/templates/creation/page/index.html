@@ -13,27 +13,30 @@
 
     <main class="container">
         {% csrf_token %}
-        <div class="categorys-container">
-            <h1>Categorias</h1>
-            <div class="categorys">
-                {% for category in categories %}
-                <div class="category {{ category.id }}">
-                    <p class="category-name">{{ category.name }}</p>
-                    <a class="remove-category"><i class="fas fa-times"></i></a>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="registers-container">
+        
+        <div class="content-container">
             <h1>Criação</h1>
-            <div class="registers">
-                <section class="register">
-                    <h2>Criar Categoria</h2>
-                    <input type="text" name="new-category" class="new-category" id="new_category"
-                        placeholder="Nova categoria...">
-                    <button type="submit" class="create-category" id="create_category">Confirmar</button>
-                </section>
-                <section class="register todo">
+            <div class="sections-container">
+                <div class="categorys-section">
+                    <section class="category-register">
+                        <h2>Criar Categoria</h2>
+                        <input type="text" name="new-category" class="new-category" id="new_category"
+                            placeholder="Nova categoria...">
+                        <button type="submit" class="create-category" id="create_category">Confirmar</button>
+                    </section>
+                    <div class="categorys-container">
+                        <h1>Categorias</h1>
+                        <div class="categorys">
+                            {% for category in categories %}
+                            <div class="category {{ category.id }}">
+                                <p class="category-name">{{ category.name }}</p>
+                                <a class="remove-category"><i class="fas fa-times"></i></a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <section class="todo-register todo">
                     <h2>Criar Tarefa</h2>
                     <input type="text" name="title" class="todo-title" id="title" placeholder="Titulo" required
                         pattern=".{1,}">

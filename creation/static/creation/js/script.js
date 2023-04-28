@@ -7,8 +7,8 @@ let delete_category = (element, data) => {
         },
         body: data,
     }).then((response) => {
-        return response.json();
-    }).then((data) => {
+        return;
+    }).then(() => {
         element.remove();
     }).catch((error) => {
         alert.log(error);

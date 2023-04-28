@@ -1,10 +1,16 @@
+{% load static %}
 <div class="header-container">
     <header>
         <h1>Todo List</h1>
+        <div class="hamburguer-button">
+            <button><i class="fas fa-bars"></i></button>
+        </div>
         <nav class="header-actions">
             <a class="nav-home" href="/">Home</a>
             <a class="nav-create" href="/creation/">Criação</a>
             <a class="nav-profile" href="">Perfil</a>
         </nav>
     </header>
+    <script src="{% static 'globals/js/mobile_menu.js' %}"></script>
+    <script src="{% static 'globals/js/navs.js' %}"></script>
 </div>

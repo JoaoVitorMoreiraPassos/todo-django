@@ -116,8 +116,8 @@ const open_editor = (todo) => {
             const links = todo.querySelector(".todo-body .link-container").innerHTML;
             const crsf = document.querySelector("[name=csrfmiddlewaretoken]").value;
 
-            const header = document.createElement("div");
-            header.classList.add("todo-header");
+            const todo_header = document.createElement("div");
+            todo_header.classList.add("todo-header");
             let categories;
             fetch('/get_categories/', {
                 method: 'POST',
@@ -143,19 +143,19 @@ const open_editor = (todo) => {
                     }
                     category_select.appendChild(option);
                 })
-                header.innerHTML = `
+                todo_header.innerHTML = `
                 <input type="text" class="todo-title form-input" value="${title}">
                 `
-                header.appendChild(category_select);
-                const body = document.createElement("div");
-                body.classList.add("todo-body");
-                body.innerHTML = `
+                todo_header.appendChild(category_select);
+                const todo_body = document.createElement("div");
+                todo_body.classList.add("todo-body");
+                todo_body.innerHTML = `
                 <textarea class="todo-description form-input" cols="30" rows="10">${description}</textarea>
                 `
 
-                const footer = document.createElement("div");
-                footer.classList.add("todo-footer");
-                footer.innerHTML = `
+                const todo_footer = document.createElement("div");
+                todo_footer.classList.add("todo-footer");
+                todo_footer.innerHTML = `
                 <div class="todo-header-icons">
                     <i class="fas fa-check close-editor"></i>
                     <a class="remove-todo" href="{% url 'home:delete_todo' pk=todo.id %}">
@@ -165,15 +165,15 @@ const open_editor = (todo) => {
                 <input type="date" class="date_to_complete form-input" value="${convert_date_to_back(date_to_complete)}">
                 `
                 todo.innerHTML = ""
-                todo.appendChild(header);
-                todo.appendChild(body);
-                todo.appendChild(footer);
+                todo.appendChild(todo_header);
+                todo.appendChild(todo_body);
+                todo.appendChild(todo_footer);
 
                 todo.querySelector(".todo-footer .todo-header-icons .close-editor").addEventListener("click", () => {
-                    const title = header.querySelector(".todo-title").value;
-                    const description = body.querySelector(".todo-description").value;
-                    const date_to_complete = footer.querySelector(".date_to_complete").value;
-                    const category = header.querySelector(".category-todo").value;
+                    const title = todo_header.querySelector(".todo-title").value;
+                    const description = todo_body.querySelector(".todo-description").value;
+                    const date_to_complete = todo_footer.querySelector(".date_to_complete").value;
+                    const category = todo_header.querySelector(".category-todo").value;
 
                     let data = new FormData();
                     data.append("id", id);
@@ -221,24 +221,7 @@ const open_editor = (todo) => {
                             `
                             document.querySelectorAll('.todo-body').forEach(linkContainer => {
                                 linkContainer.querySelector(".add-link-button").addEventListener("click", () => {
-                                    if (linkContainer.querySelector(".add-link-button").classList[1] == "open") {
-                                        linkContainer.querySelector(".add-link-container").style.animation = "open-link .3s linear forwards";
-                                        setTimeout(() => {
-                                            linkContainer.querySelector(".add-link-button").childNodes[0].classList = "fas fa-chevron-up";
-                                        }, 300);
-                                        linkContainer.querySelector(".add-link-container").style.padding = ".5rem";
-                                        linkContainer.querySelector(".add-link-button").classList.remove("open");
-                                        linkContainer.querySelector(".add-link-button").classList.add("close");
-                                    }
-                                    else {
-                                        linkContainer.querySelector(".add-link-container").style.animation = "close-link .3s linear forwards";
-                                        setTimeout(() => {
-                                            linkContainer.querySelector(".add-link-button").childNodes[0].classList = "fas fa-chevron-down";
-                                        }, 300);
-                                        linkContainer.querySelector(".add-link-container").style.padding = "0";
-                                        linkContainer.querySelector(".add-link-button").classList.remove("close");
-                                        linkContainer.querySelector(".add-link-button").classList.add("open");
-                                    }
+                                    open_close_link(linkContainer);
                                 })
                             });
                             delete_link(todo);

@@ -8,6 +8,9 @@ from django.http import JsonResponse
 from urllib.parse import urlparse
 from datetime import datetime
 
+# importar serializers
+from django.core import serializers
+
 
 # Create your views here.
 @login_required(login_url="login:login", redirect_field_name="next")
@@ -17,9 +20,11 @@ def index(request):
     todos = TodoItem.objects.filter(category__user=request.user).order_by(
         "date_to_complete"
     )
+
     # Adicionar os links de LinkToTodo para cada todo relacionada.
     for todo in todos:
         todo.link = LinkToTodoItem.objects.filter(todo_item=todo)
+
     # converter data para formato brasileiro
     for todo in todos:
         days_to_complete = todo.date_to_complete - datetime.now().date()
@@ -39,7 +44,7 @@ def index(request):
             "form1": form1,
             "form2": form2,
             "categories": Category.objects.filter(user=request.user),
-            "todos": todos,
+            "todos": todos if len(todos) > 0 else False,
         },
     )
 
@@ -108,6 +113,10 @@ def redirector(request, way):
 
 @login_required(login_url="login:login", redirect_field_name="next")
 def add_link(request, pk):
+    invalid_response = {
+        "status": "erro",
+        "message": "URL inválido",
+    }
     if not request.POST:
         raise Http404()
     POST = request.POST.copy()
@@ -116,7 +125,7 @@ def add_link(request, pk):
         if request.user == user:
             url = POST["link"]
             if url == "":
-                return JsonResponse({"status": "erro", "message": "URL inválido"})
+                return JsonResponse(invalid_response)
             try:
                 # Analisar o URL
                 parsed_url = urlparse(url)
@@ -125,18 +134,18 @@ def add_link(request, pk):
                 if not parsed_url.scheme and not parsed_url.scheme.startswith(
                     ("http", "https")
                 ):
-                    return JsonResponse({"status": "erro", "message": "URL inválido"})
+                    return JsonResponse(invalid_response)
 
                 # Verificar se o URL possui um domínio válido
                 if not parsed_url.netloc:
-                    return JsonResponse({"status": "erro", "message": "URL inválido"})
+                    return JsonResponse(invalid_response)
 
                 # Verificar se o URL possui um caminho válido
                 if not parsed_url.path:
-                    return JsonResponse({"status": "erro", "message": "URL inválido"})
+                    return JsonResponse(invalid_response)
 
             except ValueError:
-                return JsonResponse({"status": "erro", "message": "URL inválido"})
+                return JsonResponse(invalid_response)
             link = LinkToTodoItem()
             link.url = url
             link.title = POST["title"]
@@ -154,7 +163,7 @@ def add_link(request, pk):
                     "bg": POST["bg"],
                 }
             )
-    return JsonResponse({"status": "erro", "message": "URL inválido"})
+    return JsonResponse(invalid_response)
 
 
 @login_required(login_url="login:login", redirect_field_name="next")
@@ -173,3 +182,56 @@ def delete_link(request, pk):
                 link.delete()
                 return JsonResponse({"status": "ok"})
     return JsonResponse({"status": "error"})
+
+
+@login_required(login_url="login:login", redirect_field_name="next")
+def choose_category(request):
+    if request.method == "POST":
+        POST = request.POST.copy()
+        print(POST.keys())
+        if POST["id"] != "":
+            if POST["id"] != "all":
+                query = Category.objects.filter(pk=POST["id"])
+                category = query.first()
+            else:
+                category = Category.objects.filter(user=request.user).first()
+            if category and category.user == request.user:
+                todos = TodoItem.objects.filter(category=category)
+                todos = todos.order_by("date_to_complete")
+                # todos = list(todos.values_list())
+                # Adicionar os links de LinkToTodo para cada todo relacionada.
+                for todo in todos:
+                    links = LinkToTodoItem.objects.filter(todo_item=todo)
+                    todo.link = links
+
+                # converter data para formato brasileiro
+                for todo in todos:
+                    days_to_complete = todo.date_to_complete - datetime.now().date()
+                    if days_to_complete.days < 2:
+                        todo.priority = "deadline"
+                    elif days_to_complete.days < 5:
+                        todo.priority = "near-deadline"
+                    elif days_to_complete.days < 7:
+                        todo.priority = "normal-term"
+                    else:
+                        todo.priority = "long-term"
+                    todo.date_to_complete = todo.date_to_complete.strftime("%d/%m/%Y")
+                results = []
+                for todo in todos:
+                    values = {}
+                    for key, value in todo.__dict__.items():
+                        if key == "category_id":
+                            values["category"] = todo.category.name
+                        else:
+                            values[key] = value
+                    values.pop("_state")
+                    results.append(values)
+                # ajustar os links
+                for todo in results:
+                    links = todo["link"]
+                    todo["link"] = []
+                    for link in links:
+                        todo["link"].append(link.__dict__)
+                        todo["link"][-1].pop("_state")
+                print(results)
+                return JsonResponse({"status": "ok", "todos": results})

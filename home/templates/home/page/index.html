@@ -12,7 +12,18 @@
     {% include 'bases/header.html' %}
     <div class="container">
         {% csrf_token %}
+        <div class="filters-container">
+            <div class="filter-box">
+                <select class="filter-choices">
+                    <option value="all" selected>Todos</option>
+                    {% for category in categories %}
+                    <option value="{{ category.pk }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
         <div class="todo-container">
+            {% if todo is not False %}
             {% for todo in todos %}
             <div class="todo {{ todo.priority }} {{ todo.pk }}">
                 <div class="todo-header">
@@ -31,7 +42,8 @@
                         {% endfor %}
                     </div>
                     <div class="add-link-container {{ todo.pk }}">
-                        <input type="text" name="link" id="link" class="link-input-url" placeholder="https://www.example.com">
+                        <input type="text" name="link" id="link" class="link-input-url"
+                            placeholder="https://www.example.com">
                         <input type="text" name="title" id="title" class="link-input-title" placeholder="Titulo">
                         <button class="send-link">Adicionar</button>
                     </div>
@@ -48,11 +60,19 @@
                 </div>
             </div>
             {% endfor %}
+            {% else %}
+            <div>
+                <p class="no-todo">Nenhum todo adicionado</p>
+            </div>
+            {% endif %}
         </div>
     </div>
     {% include 'bases/footer.html' %}
+    <script src="{% static 'home/js/colors.js' %}"></script>
+    <script src="{% static 'home/js/open_close_link.js' %}"></script>
     <script src="{% static 'home/js/script.js' %}"></script>
     <script src="{% static 'home/js/edit.js' %}"></script>
-    </body>
+    <script src="{% static 'home/js/filter_category.js' %}"></script>
+</body>
 
 </html>

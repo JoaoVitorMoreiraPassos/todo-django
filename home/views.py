@@ -26,6 +26,7 @@ def index(request):
     # converter data para formato brasileiro
     for todo in todos:
         days_to_complete = todo.date_to_complete - datetime.now().date()
+
         if days_to_complete.days < 2:
             todo.priority = "deadline"
         elif days_to_complete.days < 5:

@@ -13,7 +13,7 @@ from datetime import datetime
 # Create your views here.
 @login_required(login_url="login:login", redirect_field_name="next")
 def creation(request):
-    categories = Category.objects.filter(user=request.user)
+    categories = Category.objects.filter(user=request.user).exclude(name="Completos")
     return render(
         request, "creation/page/index.html", context={"categories": categories}
     )
@@ -21,7 +21,6 @@ def creation(request):
 
 @login_required(login_url="login:login", redirect_field_name="next")
 def create_category(request):
-    print(request.POST)
     if not request.POST:
         raise Http404()
     POST = request.POST
@@ -29,6 +28,10 @@ def create_category(request):
     POST["user"] = request.user
 
     if POST["category"] != "":
+        if POST["Category"] in Category.objects.filter(user=request.user):
+            return JsonResponse(
+                {"status": "error", "errors": "Categoria já existente."}
+            )
         Category.objects.create(name=POST["category"], user=request.user)
         id = Category.objects.filter(user=request.user).order_by("-id")[0].id
         return JsonResponse({"status": "ok", "name": POST["category"], "id": id})
@@ -43,7 +46,6 @@ def delete_category(request):
     if not request.POST:
         raise Http404()
     pk = request.POST.get("id", None)
-    print(pk)
     if pk and pk != "":
         category = Category.objects.get(pk=pk)
         if category.user != request.user:
@@ -65,7 +67,6 @@ def create_todo(request):
     description = POST.get("description", None)
     date = POST.get("date", None)
     category = POST.get("category", None)
-    print(POST)
     if title and title != "":
         title = title.strip()
         invalid_data = {

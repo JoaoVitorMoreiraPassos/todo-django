@@ -15,7 +15,7 @@
         <div class="filters-container">
             <div class="filter-box">
                 <select class="filter-choices">
-                    <option value="all" selected>Todos</option>
+                    <option value="opened" selected>Em aberto</option>
                     {% for category in categories %}
                     <option value="{{ category.pk }}">{{ category.name }}</option>
                     {% endfor %}
@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="todo-container">
-            {% if todo is not False %}
+            {% if todos is not False %}
             {% for todo in todos %}
             <div class="todo {{ todo.priority }} {{ todo.pk }}">
                 <div class="todo-header">
@@ -51,6 +51,7 @@
                 </div>
                 <div class="todo-footer">
                     <div class="todo-header-icons">
+                        <i class="fas fa-check complete-todo"></i>
                         <i class="fas fa-edit open-editor"></i>
                         <a class="remove-todo">
                             <i class="fas fa-trash-alt"></i>
@@ -72,7 +73,7 @@
     <script src="{% static 'home/js/open_close_link.js' %}"></script>
     <script src="{% static 'home/js/script.js' %}"></script>
     <script src="{% static 'home/js/edit.js' %}"></script>
-    <script src="{% static 'home/js/filter_category.js' %}"></script>
+    <script src="{% static 'home/js/filter_category.js'%}"></script>
 </body>
 
 </html>

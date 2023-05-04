@@ -10,6 +10,7 @@ let delete_category = (element, data) => {
         return;
     }).then(() => {
         element.remove();
+        document.querySelector(`option[value="${data.get("id")}"]`).remove();
     }).catch((error) => {
         alert.log(error);
     })
@@ -20,12 +21,10 @@ document.querySelector(".create-category").addEventListener("click", () => {
     if (category == "") {
         return;
     }
-    console.log(category)
     const csrf = document.querySelector("[name=csrfmiddlewaretoken]").value;
 
     let data = new FormData()
     data.append("category", category);
-    console.log(data)
     fetch("/create_category/", {
         method: "POST",
         headers: {
@@ -36,7 +35,6 @@ document.querySelector(".create-category").addEventListener("click", () => {
     }).then((response) => {
         return response.json();
     }).then((data) => {
-        console.log(data);
         let newCategory = document.createElement("div");
         newCategory.classList = `category`;
         let name = document.createElement("p");
@@ -82,6 +80,7 @@ document.querySelector(".create-todo").addEventListener("click", () => {
     const category = document.querySelector(".todo-category");
     const csrf = document.querySelector("[name=csrfmiddlewaretoken]").value;
     if (todo.value == "" || date.value == "" || category.value == "") {
+        alert("Por favor preencha todos os campos!");
         return;
     }
     let data = new FormData()

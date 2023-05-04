@@ -47,7 +47,7 @@ body {
     border: none;
     border-radius: 0.25rem;
     height: 2rem;
-    width: 5rem;
+    width: 7rem;
     box-shadow: 3px 11px 19px -8px rgba(0, 0, 0, 0.75);
     padding: .25rem;
     outline: none;
@@ -323,7 +323,7 @@ body {
 }
 
 .todo-header-icons {
-    width: 4rem;
+    width: 100%;
     height: 100%;
     display: flex;
     flex-direction: row;
@@ -337,6 +337,10 @@ body {
 
 .todo-header-icons a {
     text-decoration: none;
+}
+
+.complete-todo {
+    color: #6dc7c7;
 }
 
 .todo-header-icons a i {
@@ -492,7 +496,7 @@ body {
 }
 
 .todo-footer {
-    width: 15%;
+    width: auto;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -684,6 +688,11 @@ textarea {
         width: 95%;
         padding: 1rem;
     }
+
+    .todo-header-icons {
+        width: 40%;
+        justify-content: space-around;
+    }
 }
 
 @media screen and (max-width: 425px) {
@@ -697,5 +706,9 @@ textarea {
 
     .todo {
         width: 100%;
+    }
+
+    .todo-header-icons {
+        width: 60%;
     }
 }

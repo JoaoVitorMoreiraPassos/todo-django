@@ -46,7 +46,6 @@ const delete_link = (todo) => {
                 return response.json();
             }).then((data) => {
                 if (data.status == "ok") {
-                    console.log(todo)
                     rm_button.parentNode.remove();
                 }
             })
@@ -61,7 +60,6 @@ const add_link = (todo) => {
         const link = todo.querySelector(".todo-body .add-link-container .link-input-url").value;
         const title = todo.querySelector(".todo-body .add-link-container .link-input-title").value;
         const bg = window.getComputedStyle(todo).backgroundColor;
-        console.log(bg + " " + id + " " + link + " " + title)
         if (link == "" || title == "") {
             alert("Preencha todos os campos");
             return;
@@ -105,10 +103,34 @@ const add_link = (todo) => {
     });
 }
 
+const done_todo = (todo) => {
+    todo.querySelector(".complete-todo").addEventListener(
+        "click", () => {
+            const id = todo.classList[2];
+            const crsf = document.querySelector("[name=csrfmiddlewaretoken]").value;
+            let data = new FormData();
+            data.append("id", id);
+            fetch('/complete_todo/', {
+                method: 'POST',
+                headers: {
+                    "X-CSRFToken": crsf,
+                },
+                body: data
+            }).then((response) => {
+                return responseo.json();
+            }).then((data) => {
+                if (data.status == "ok") {
+                    todo.remove();
+                }
+            })
+        }
+    )
+}
+
 
 const open_editor = (todo) => {
-    todo.querySelector(".todo-footer .todo-header-icons .open-editor").addEventListener(
-        "click", () => {
+    todo.querySelector(".open-editor").addEventListener(
+        "click", async () => {
             const id = todo.classList[2];
             const title = todo.querySelector(".todo-header .todo-title").textContent;
             const description = todo.querySelector(".todo-body .todo-description").textContent;
@@ -119,7 +141,7 @@ const open_editor = (todo) => {
             const todo_header = document.createElement("div");
             todo_header.classList.add("todo-header");
             let categories;
-            fetch('/get_categories/', {
+            await fetch('/get_categories/', {
                 method: 'POST',
                 headers: {
                     "X-CSRFToken": crsf,
@@ -137,7 +159,6 @@ const open_editor = (todo) => {
                     option.value = category.id;
                     option.innerHTML = category.name;
 
-                    console.log(category.name, category_todo)
                     if (category.name == category_todo) {
                         option.selected = true;
                     }
@@ -211,6 +232,7 @@ const open_editor = (todo) => {
                             </div>
                             <div class="todo-footer">
                                 <div class="todo-header-icons">
+                                    <i class="fas fa-check complete-todo"></i>
                                     <i class="fas fa-edit open-editor"></i>
                                     <a class="remove-todo">
                                         <i class="fas fa-trash-alt"></i>
@@ -228,6 +250,7 @@ const open_editor = (todo) => {
                             add_link(todo);
                             open_editor(todo);
                             delete_todo(todo);
+                            done_todo(todo);
                         }
                     })
                 })
@@ -237,9 +260,11 @@ const open_editor = (todo) => {
         })
 }
 
+
 document.querySelectorAll(".todo").forEach((todo) => {
     add_link(todo);
     delete_link(todo);
     open_editor(todo);
     delete_todo(todo);
+    done_todo(todo);
 })

@@ -2,14 +2,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.http import Http404
-from .models import Category, TodoItem, LinkToTodoItem
+from .models import Category, TodoItem, LinkToTodoItem, User
 from .forms import CategoryForm, TodoItemForm
 from django.http import JsonResponse
 from urllib.parse import urlparse
 from datetime import datetime
-
-# importar serializers
-from django.core import serializers
 
 
 # Create your views here.
@@ -17,10 +14,11 @@ from django.core import serializers
 def index(request):
     form1 = CategoryForm()
     form2 = TodoItemForm(int(request.user.id))
-    todos = TodoItem.objects.filter(category__user=request.user).order_by(
-        "date_to_complete"
+    todos = (
+        TodoItem.objects.filter(category__user=request.user)
+        .order_by("date_to_complete")
+        .exclude(category__name="Completos")
     )
-
     # Adicionar os links de LinkToTodo para cada todo relacionada.
     for todo in todos:
         todo.link = LinkToTodoItem.objects.filter(todo_item=todo)
@@ -54,7 +52,6 @@ def get_categories(request):
     if request.method == "POST":
         categories = Category.objects.filter(user=request.user)
         categories = list(categories.values("id", "name"))
-        print(categories)
         return JsonResponse({"categories": categories})
 
 
@@ -78,6 +75,7 @@ def edit_todo(request, pk):
                         todo.category = Category.objects.filter(
                             pk=POST["category"]
                         ).first()
+                todo.date_updated = datetime.now()
                 todo.save()
                 response = {
                     "status": "ok",
@@ -173,11 +171,8 @@ def delete_link(request, pk):
     POST = request.POST.copy()
     if POST["id"] != "":
         user = TodoItem.objects.filter(pk=pk).first().category.user
-        print(user, request.user)
         if request.user == user:
-            print(POST["id"], type(POST["id"]))
             link = LinkToTodoItem.objects.filter(pk=int(POST["id"])).first()
-            print(link)
             if link:
                 link.delete()
                 return JsonResponse({"status": "ok"})
@@ -188,13 +183,14 @@ def delete_link(request, pk):
 def choose_category(request):
     if request.method == "POST":
         POST = request.POST.copy()
-        print(POST.keys())
         if POST["id"] != "":
-            if POST["id"] != "all":
+            if POST["id"] != "opened":
                 query = Category.objects.filter(pk=POST["id"])
                 category = query.first()
             else:
-                category = Category.objects.filter(user=request.user).first()
+                category = Category.objects.filter(user=request.user).exclude(
+                    name="Completos"
+                )
             if category and category.user == request.user:
                 todos = TodoItem.objects.filter(category=category)
                 todos = todos.order_by("date_to_complete")
@@ -233,5 +229,27 @@ def choose_category(request):
                     for link in links:
                         todo["link"].append(link.__dict__)
                         todo["link"][-1].pop("_state")
-                print(results)
                 return JsonResponse({"status": "ok", "todos": results})
+
+
+@login_required(login_url="login:login", redirect_field_name="next")
+def check(request):
+    if not request.POST:
+        raise Http404()
+    POST = request.POST.copy()
+    if POST["id"] != "":
+        todo = TodoItem.objects.filter(pk=POST["id"]).first()
+        if todo:
+            if todo.category.user == request.user:
+                todo.category = (
+                    Category.objects.filter(
+                        user=User.objects.filter(username=request.user).first(),
+                    )
+                    .filter(name="Completos")
+                    .first()
+                )
+
+                todo.is_completed = True
+                todo.save()
+                return JsonResponse({"status": "ok"})
+    return JsonResponse({"status": "error"})

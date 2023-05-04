@@ -46,6 +46,7 @@ document.querySelector(".filter-choices").addEventListener("change", (event) => 
                 </div> 
                 `
             })
+            const check_btn = todo_infos.is_completed ? "<i class='fas fa-check complete-todo'></i>" : "";
             const todo_html = `
             <div class="todo-header">
                 <p class="todo-title">${todo_infos.title}</p>
@@ -67,6 +68,7 @@ document.querySelector(".filter-choices").addEventListener("change", (event) => 
             </div>
             <div class="todo-footer">
                 <div class="todo-header-icons">
+                ${check_btn}
                 <i class="fas fa-edit open-editor"></i>
                 <a class="remove-todo">
                 <i class="fas fa-trash-alt"></i>
@@ -81,10 +83,12 @@ document.querySelector(".filter-choices").addEventListener("change", (event) => 
         if (data.todos.length > 0) {
             data.todos.forEach((todo) => {
                 const new_todo = createTodo(todo);
+                console.log(new_todo);
                 add_link(new_todo);
                 delete_link(new_todo);
                 open_editor(new_todo);
                 delete_todo(new_todo);
+                done_todo(new_todo);
                 new_todo.querySelector(".add-link-button").addEventListener("click", () => {
                     open_close_link(new_todo);
                 })

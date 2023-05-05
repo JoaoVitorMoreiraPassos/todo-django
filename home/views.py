@@ -185,17 +185,29 @@ def choose_category(request):
     if request.method == "POST":
         POST = request.POST.copy()
         if POST["id"] != "":
-            if POST["id"] != "opened":
-                query = Category.objects.filter(pk=POST["id"])
-                category = query.first()
-            else:
-                category = Category.objects.filter(user=request.user).exclude(
+            if POST["id"] == "opened":
+                categories = Category.objects.filter(user=request.user).exclude(
                     name="Completos"
                 )
-            if category and category.user == request.user:
-                todos = TodoItem.objects.filter(category=category)
+                categories = list(categories.values("id", "name"))
+            else:
+                categories = Category.objects.filter(user=request.user).filter(
+                    pk=POST["id"]
+                )
+                categories = list(categories.values("id", "name", "user"))
+
+            if categories:
+                print(categories)
+                if len(categories) > 1:
+                    todos = TodoItem.objects.filter(
+                        category__user__pk=request.user.pk
+                    ).exclude(category__name="Completos")
+                elif len(categories) == 1:
+                    todos = TodoItem.objects.filter(category=categories[0]["id"])
+                else:
+                    return JsonResponse({"status": "error"})
                 todos = todos.order_by("date_to_complete")
-                # todos = list(todos.values_list())
+
                 # Adicionar os links de LinkToTodo para cada todo relacionada.
                 for todo in todos:
                     links = LinkToTodoItem.objects.filter(todo_item=todo)

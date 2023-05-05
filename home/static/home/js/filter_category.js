@@ -46,7 +46,8 @@ document.querySelector(".filter-choices").addEventListener("change", (event) => 
                 </div> 
                 `
             })
-            const check_btn = todo_infos.is_completed ? "<i class='fas fa-check complete-todo'></i>" : "";
+            const check_btn = !(todo_infos.is_completed) ? "<i class='fas fa-check complete-todo'></i>" : "";
+            console.log(check_btn);
             const todo_html = `
             <div class="todo-header">
                 <p class="todo-title">${todo_infos.title}</p>
@@ -77,6 +78,7 @@ document.querySelector(".filter-choices").addEventListener("change", (event) => 
                 <p class="date_to_complete">${todo_infos.date_to_complete}</p>
             </div>
             `
+            console.log("vei aqui");
             todo_body.innerHTML = todo_html;
             return todo_body;
         }

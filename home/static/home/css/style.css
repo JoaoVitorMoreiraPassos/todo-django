@@ -340,7 +340,7 @@ body {
 }
 
 .complete-todo {
-    color: #6dc7c7;
+    color: var(--primary-color);
 }
 
 .todo-header-icons a i {

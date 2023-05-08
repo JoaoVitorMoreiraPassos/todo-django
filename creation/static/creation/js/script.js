@@ -12,7 +12,7 @@ let delete_category = (element, data) => {
         element.remove();
         document.querySelector(`option[value="${data.get("id")}"]`).remove();
     }).catch((error) => {
-        alert.log(error);
+        alert(error);
     })
 }
 
@@ -33,8 +33,10 @@ document.querySelector(".create-category").addEventListener("click", () => {
         body: data,
 
     }).then((response) => {
+        console.error(response);
         return response.json();
     }).then((data) => {
+        console.log("data: " + data)
         let newCategory = document.createElement("div");
         newCategory.classList = `category`;
         let name = document.createElement("p");
@@ -42,10 +44,10 @@ document.querySelector(".create-category").addEventListener("click", () => {
         name.innerHTML = data.name;
         let deleteButton = document.createElement("button");
         deleteButton.addEventListener("click", () => {
-            data_id = new FormData()
-            data_id.append("id", data.id)
+            data_id = new FormData();
+            data_id.append("id", data.id);
             delete_category(newCategory, data_id);
-        })
+        });
         deleteButton.classList = "remove-category";
         let deleteIcon = document.createElement("i");
         deleteIcon.classList = "fas fa-times";
@@ -59,7 +61,7 @@ document.querySelector(".create-category").addEventListener("click", () => {
         document.querySelector(".todo-category").appendChild(option);
         document.querySelector(".new-category").value = "";
     }).catch((error) => {
-        alert.log(error);
+        console.log(error);
     })
 })
 

@@ -28,7 +28,7 @@ def create_category(request):
     POST["user"] = request.user
 
     if POST["category"] != "":
-        if POST["Category"] in Category.objects.filter(user=request.user):
+        if POST["category"] in Category.objects.filter(user=request.user):
             return JsonResponse(
                 {"status": "error", "errors": "Categoria já existente."}
             )

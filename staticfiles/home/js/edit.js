@@ -117,7 +117,7 @@ const done_todo = (todo) => {
                 },
                 body: data
             }).then((response) => {
-                return responseo.json();
+                return response.json();
             }).then((data) => {
                 if (data.status == "ok") {
                     todo.remove();
@@ -255,7 +255,6 @@ const open_editor = (todo) => {
                     })
                 })
             }).catch((error) => {
-                console.log(error);
             })
         })
 }

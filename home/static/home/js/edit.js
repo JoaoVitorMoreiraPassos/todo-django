@@ -255,7 +255,6 @@ const open_editor = (todo) => {
                     })
                 })
             }).catch((error) => {
-                console.log(error);
             })
         })
 }

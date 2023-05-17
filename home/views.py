@@ -125,28 +125,26 @@ def add_link(request, pk):
             url = POST["link"]
             if url == "":
                 return JsonResponse(invalid_response)
-            # Deixa passar se a URL é um endereço local windows ou linux
-            if not url.startswith(("\\", "file:/", "/")):
-                try:
-                    # Analisar o URL
-                    parsed_url = urlparse(url)
+            try:
+                # Analisar o URL
+                parsed_url = urlparse(url)
 
-                    # Verificar se o URL possui um esquema válido
-                    if not parsed_url.scheme and not parsed_url.scheme.startswith(
-                        ("http", "https")
-                    ):
-                        return JsonResponse(invalid_response)
-
-                    # Verificar se o URL possui um domínio válido
-                    if not parsed_url.netloc:
-                        return JsonResponse(invalid_response)
-
-                    # Verificar se o URL possui um caminho válido
-                    if not parsed_url.path:
-                        return JsonResponse(invalid_response)
-
-                except ValueError:
+                # Verificar se o URL possui um esquema válido
+                if not parsed_url.scheme and not parsed_url.scheme.startswith(
+                    ("http", "https")
+                ):
                     return JsonResponse(invalid_response)
+
+                # Verificar se o URL possui um domínio válido
+                if not parsed_url.netloc:
+                    return JsonResponse(invalid_response)
+
+                # Verificar se o URL possui um caminho válido
+                if not parsed_url.path:
+                    return JsonResponse(invalid_response)
+
+            except ValueError:
+                return JsonResponse(invalid_response)
             link = LinkToTodoItem()
             link.url = url
             link.title = POST["title"]

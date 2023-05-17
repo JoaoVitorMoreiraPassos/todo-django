@@ -126,7 +126,7 @@ def add_link(request, pk):
             if url == "":
                 return JsonResponse(invalid_response)
             # Deixa passar se a URL é um endereço local windows ou linux
-            if not url.startswith(("\\", "file:/")):
+            if not url.startswith(("\\", "file:/", "/")):
                 try:
                     # Analisar o URL
                     parsed_url = urlparse(url)

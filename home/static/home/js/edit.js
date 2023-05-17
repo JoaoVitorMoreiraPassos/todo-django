@@ -82,7 +82,7 @@ const add_link = (todo) => {
                 let link_container = document.createElement("div");
                 const background = getRandomColor(data.bg);
                 link_container.innerHTML = `
-                <a href="/redirector/${data.url}" target="_blank">${data.title}</a>
+                <a href="${data.url}" target="_blank">${data.title}</a>
                 <a class="remove-link"><i class="fas fa-times"></i></a>
                 `;
                 link_container.style.backgroundColor = `rgb(${background.r}, ${background.g}, ${background.b})`;

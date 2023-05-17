@@ -36,7 +36,7 @@
                         <p class="label-links">Links: </p>
                         {% for link in todo.link %}
                         <div class="todo-link {{link.pk}}">
-                            <a href={% url 'home:redirector' way=link.url %} target="_blank">{{ link.title }}</a>
+                            <a href=way={{ link.url }} target="_blank">{{ link.title }}</a>
                             <a class="remove-link"><i class="fas fa-times"></i></a>
                         </div>
                         {% endfor %}

@@ -41,7 +41,7 @@ document.querySelector(".filter-choices").addEventListener("change", (event) => 
                 const font_color = getContrastColor(bg_color);
                 links += `
                 <div class="todo-link ${link.id}" style="background-color: rgb(${bg_color.r}, ${bg_color.r}, ${bg_color.b})">
-                    <a href="/redirector/${link.url}" style="color: ${font_color}" target="_blank">${link.title}</a>
+                    <a href="${link.url}" style="color: ${font_color}" target="_blank">${link.title}</a>
                     <a class="remove-link"><i class="fas fa-times" style="color: ${font_color}"></i></a>
                 </div> 
                 `
